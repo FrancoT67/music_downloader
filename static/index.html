@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Playlist to MP3</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .message {
+            margin-top: 15px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>YouTube Playlist to MP3</h1>
+        <input type="text" id="playlistUrl" placeholder="Enter YouTube Playlist URL">
+        <button onclick="downloadPlaylist()">Download MP3s</button>
+        <div class="message" id="message"></div>
+    </div>
+
+    <script>
+        async function downloadPlaylist() {
+            const url = document.getElementById('playlistUrl').value;
+            const message = document.getElementById('message');
+
+            if (!url) {
+                message.innerHTML = "Please enter a playlist URL.";
+                message.style.color = "red";
+                return;
+            }
+
+            message.innerHTML = "Processing your request...";
+            message.style.color = "blue";
+
+            try {
+                const response = await fetch('http://127.0.0.1:5000/download', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ url }),
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    message.innerHTML = "Download complete! Check the server for your files.";
+                    message.style.color = "green";
+                } else {
+                    message.innerHTML = "Error: " + data.error;
+                    message.style.color = "red";
+                }
+            } catch (error) {
+                message.innerHTML = "Failed to connect to the server.";
+                message.style.color = "red";
+            }
+        }
+    </script>
+</body>
+
+</html>
